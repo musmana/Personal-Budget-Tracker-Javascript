@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Budget Tracker</title>
+</head>
+<body>
+  <h1>💰 Personal Budget Tracker</h1>
+  <input id="amount" type="number" placeholder="Amount">
+  <select id="type">
+    <option value="income">Income</option>
+    <option value="expense">Expense</option>
+  </select>
+  <select id="category">
+    <option value="food">Food</option>
+    <option value="rent">Rent</option>
+    <option value="salary">Salary</option>
+  </select>
+  <button onclick="addTransaction()">Add</button>
+
+  <h2>Summary</h2>
+  <p id="income">Income: 0</p>
+  <p id="expenses">Expenses: 0</p>
+  <p id="balance">Balance: 0</p>
+
+  <script>
+    const currency = "₹";
+    let balance = 0;
+    let transactions = [];
+    var legacyNote = "Demo of var scope"; // just to show usage
+
+    function addTransaction() {
+      let amount = parseFloat(document.getElementById("amount").value);
+      let type = document.getElementById("type").value;
+      let category = document.getElementById("category").value;
+
+      if (!amount || amount <= 0 || !category) {
+        alert("Please enter a valid amount and category.");
+        return;
+      }
+
+      const transaction = {
+        id: Date.now(),
+        amount: amount,
+        type: type === "income",
+        category,
+        date: new Date()
+      };
+
+      transactions.push(transaction);
+      balance += transaction.type ? amount : -amount;
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      let income = transactions.filter(t => t.type).reduce((sum, t) => sum + t.amount, 0);
+      let expenses = transactions.filter(t => !t.type).reduce((sum, t) => sum + t.amount, 0);
+
+      document.getElementById("income").textContent = `Income: ${currency}${income}`;
+      document.getElementById("expenses").textContent = `Expenses: ${currency}${expenses}`;
+      document.getElementById("balance").textContent = `Balance: ${currency}${balance}`;
+
+      if (balance < 0) alert("⚠️ Overspending detected!");
+    }
+  </script>
+</body>
+</html>
